@@ -1,6 +1,6 @@
 'use server';
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Contact } from '@prisma/client';
 import { z } from 'zod';
 
 const prisma = new PrismaClient();
@@ -9,18 +9,9 @@ const findMatchesSchema = z.object({
   listingId: z.string().uuid(),
 });
 
-// Define what the metadata for listings and contacts should look like.
-// This helps with type safety when accessing JSON fields.
 const listingMetadataSchema = z.object({
   price: z.number(),
-  bedrooms_req: z.number().optional(),
 }).passthrough();
-
-const contactMetadataSchema = z.object({
-  budget: z.number().optional(),
-  bedrooms_req: z.number().optional(),
-}).passthrough();
-
 
 export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
   try {
@@ -32,28 +23,23 @@ export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
     }
 
     const listingMetadata = listingMetadataSchema.parse(listing.metadata);
+    const price = listingMetadata.price || 0;
 
-    // Build the query conditions for Prisma's JSON filtering
-    const conditions: any[] = [];
-    if (listingMetadata.price) {
-      conditions.push({
-        metadata: {
-          path: ['budget'],
-          gte: listingMetadata.price,
-        }
-      });
-    }
-    // Add more conditions like bedrooms if needed
-
-    const matches = await prisma.contact.findMany({
+    // Prisma's JSON filtering requires a specific structure.
+    // We query for contacts where the 'budget' field in their metadata is
+    // greater than or equal to the listing price.
+    const matchingContacts = await prisma.contact.findMany({
       where: {
         workspace_id: listing.workspace_id,
-        AND: conditions,
+        metadata: {
+          path: ['budget'],
+          gte: price,
+        },
       },
-      take: 5,
+      take: 10,
     });
 
-    return { success: true, data: matches };
+    return { success: true, data: matchingContacts };
 
   } catch (error) {
     console.error("Error finding matches:", error);

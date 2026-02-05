@@ -12,6 +12,7 @@ This document tracks the development progress, key decisions, and version histor
 - **Database Provisioning:** Successfully set up the database schema on Supabase by generating and manually executing a SQL script to bypass network issues (see `ISSUE-LOG.md`).
 
 ### Features Implemented (Hub & Spokes):
+- **Agent Module:** Integrated the `findMatches` server action, allowing users to find matching contacts for a deal based on metadata.
 - **Tradie Module:** Integrated the `generateQuote` server action into a deal detail page, allowing users to add line items and update deal values dynamically.
 - **Server Actions:** Implemented core business logic for Tradie (`generateQuote`) and Agent (`findMatches`) modules, along with a `getDealHealth` utility.
 - **Activities API:** Backend endpoints for creating and listing activities associated with deals or contacts.
