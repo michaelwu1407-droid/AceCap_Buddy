@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WorkspaceType {
+  TRADIE
+  AGENT
+}
+
+enum DealStage {
+  NEW
+  QUALIFIED
+  IN_PROGRESS
+  INVOICED
+  WON
+  LOST
+}
+
+model Workspace {
+  id            String        @id @default(uuid())
+  name          String
+  type          WorkspaceType
+  brandingColor String?       @map("branding_color")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  contacts Contact[]
+  deals    Deal[]
+}
+
+model Contact {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  workspaceId String   @map("workspace_id")
+  metadata    Json?    // Flexible field for contact-specific data (e.g., buyer budget)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace  Workspace  @relation(fields: [workspaceId], references: [id])
+  deals      Deal[]
+  activities Activity[]
+}
+
+model Deal {
+  id          String    @id @default(uuid())
+  title       String
+  value       Float     @default(0)
+  stage       DealStage @default(NEW)
+  contactId   String    @map("contact_id")
+  workspaceId String    @map("workspace_id")
+  metadata    Json      // The "Magic" Column for vertical-specific data
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  contact       Contact        @relation(fields: [contactId], references: [id])
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
+  activities    Activity[]
+  invoices      Invoice[]
+  openHouseLogs OpenHouseLog[]
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  type      String   // CALL, EMAIL, NOTE
+  content   String
+  dealId    String?  @map("deal_id")
+  contactId String?  @map("contact_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  deal    Deal?    @relation(fields: [dealId], references: [id])
+  contact Contact? @relation(fields: [contactId], references: [id])
+}
+
+model Invoice {
+  id        String   @id @default(uuid())
+  dealId    String   @map("deal_id")
+  amount    Float
+  status    String   @default("DRAFT") // DRAFT, SENT, PAID
+  items     Json     // Line items
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  deal Deal @relation(fields: [dealId], references: [id])
+}
+
+model OpenHouseLog {
+  id           String   @id @default(uuid())
+  dealId       String   @map("deal_id")
+  visitorName  String   @map("visitor_name")
+  visitorPhone String?  @map("visitor_phone")
+  feedback     String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  deal Deal @relation(fields: [dealId], references: [id])
+}
