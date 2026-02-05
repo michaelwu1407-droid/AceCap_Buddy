@@ -1,5 +1,4 @@
-'use client';
-
+import Link from 'next/link';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { DealCardData } from './KanbanBoard';
@@ -26,17 +25,20 @@ export const KanbanCard = ({ deal }: KanbanCardProps) => {
     borderRadius: '0.5rem',
     color: '#e2e8f0', // slate-200
     cursor: 'grab',
+    textDecoration: 'none', // for the link
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <h3 style={{ margin: 0, fontSize: '1rem' }}>{deal.title}</h3>
-      <p style={{ margin: '0.25rem 0', color: '#94a3b8' }}>
-        ${deal.value}
-      </p>
-      <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1' }}>
-        {deal.contact.name}
-      </p>
-    </div>
+    <Link href={`/deals/${deal.id}`} passHref>
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <h3 style={{ margin: 0, fontSize: '1rem' }}>{deal.title}</h3>
+        <p style={{ margin: '0.25rem 0', color: '#94a3b8' }}>
+          ${deal.value}
+        </p>
+        <p style={{ margin: 0, fontSize: '0.8rem', color: '#cbd5e1' }}>
+          {deal.contact.name}
+        </p>
+      </div>
+    </Link>
   );
 };

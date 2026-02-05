@@ -12,6 +12,7 @@ This document tracks the development progress, key decisions, and version histor
 - **Database Provisioning:** Successfully set up the database schema on Supabase by generating and manually executing a SQL script to bypass network issues (see `ISSUE-LOG.md`).
 
 ### Features Implemented (Hub):
+- **Server Actions:** Implemented core business logic for Tradie (`generateQuote`) and Agent (`findMatches`) modules, along with a `getDealHealth` utility.
 - **Activities API:** Backend endpoints for creating and listing activities associated with deals or contacts.
 - **Deals API & UI:** Full CRUD API and a Kanban board UI with drag-and-drop functionality for pipeline management.
 - **Contacts API & UI:** Full CRUD API and a basic frontend for creating and listing contacts within a workspace.
