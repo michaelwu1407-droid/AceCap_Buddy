@@ -2,30 +2,22 @@
 
 This document tracks the development progress, key decisions, and version history of the PJ-Buddy project.
 
-## v0.1.0 - Initial Setup & Workspace Feature
+## v0.1.0 - Initial Setup & Core Features
 
 **Date:** 2026-02-05
 
 ### Core Setup:
-- **Project Scaffolding:** Initialized Next.js 15 project with TypeScript, Tailwind, and required dependencies (`lucide-react`, `framer-motion`, etc.) as per the project brief.
-- **Database Schema:** Defined the complete `schema.prisma` file, including `Workspace`, `Contact`, `Deal`, `Activity`, `Invoice`, and `OpenHouseLog` models, along with required enums.
-- **Database Provisioning:** Successfully set up the database schema on Supabase. This was achieved by manually generating the SQL script and running it in the Supabase SQL Editor to bypass a network connectivity issue (see `ISSUE-LOG.md` for details).
+- **Project Scaffolding:** Initialized Next.js 15 project with TypeScript, Tailwind, and required dependencies.
+- **Database Schema:** Defined the complete `schema.prisma` file for all core models.
+- **Database Provisioning:** Successfully set up the database schema on Supabase by generating and manually executing a SQL script to bypass network issues (see `ISSUE-LOG.md`).
 
-### Features Implemented:
+### Features Implemented (Hub):
+- **Activities API:** Backend endpoints for creating and listing activities associated with deals or contacts.
+- **Deals API & UI:** Full CRUD API and a Kanban board UI with drag-and-drop functionality for pipeline management.
 - **Contacts API & UI:** Full CRUD API and a basic frontend for creating and listing contacts within a workspace.
-- **Deals API & UI:** Full CRUD API and a basic frontend for creating and listing deals, associated with contacts and workspaces.
-- **Workspace API:**
-  - `POST /api/workspaces`: Create a new workspace.
-  - `GET /api/workspaces`: Retrieve a list of all workspaces.
-  - `GET /api/workspaces/[id]`: Retrieve a single workspace.
-  - `PUT /api/workspaces/[id]`: Update a workspace.
-  - `DELETE /api/workspaces/[id]`: Delete a workspace.
-- **Workspace UI:**
-  - Created a foundational UI at `/workspaces`.
-  - Implemented a component to list all existing workspaces.
-  - Implemented a form to create new workspaces.
-- **Core UI:** Established a root layout (`layout.tsx`), homepage (`page.tsx`), and global stylesheet (`globals.css`) to provide basic navigation and structure.
+- **Workspace API & UI:** Full CRUD API and frontend for creating and listing workspaces.
+- **Core UI:** Established a root layout, homepage, and global stylesheet to provide basic navigation and structure.
 
 ### Project Management:
-- Created `PROJECT_LOG.md` and `ISSUE_LOG.md` for ongoing documentation.
+- Created `PROJECT_LOG.md` and `ISSUE_LOG.md`.
 - Configured git identity and committed all initial work.
