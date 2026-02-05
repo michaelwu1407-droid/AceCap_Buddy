@@ -4,8 +4,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { DealCardData } from '@/components/core/KanbanBoard';
 import { QuoteGenerator } from '@/components/modules/tradie/QuoteGenerator';
+import { MatchFinder } from '@/components/modules/agent/MatchFinder';
+import { WorkspaceType } from '@prisma/client';
 
 type DealDetails = DealCardData & {
+    workspace: {
+        type: WorkspaceType;
+    };
     metadata: {
         quote_items?: { desc: string, price: number }[]
     }
@@ -37,8 +42,8 @@ export default function DealDetailPage() {
         fetchDeal();
     }, [id]);
     
-    const handleQuoteGenerated = (updatedDeal: any) => {
-        // Refresh the deal data to show the new quote and value
+    const handleUpdate = () => {
+        // Refresh the deal data after an action
         fetchDeal();
     };
 
@@ -52,20 +57,27 @@ export default function DealDetailPage() {
             <p><strong>Value:</strong> ${deal.value}</p>
             <p><strong>Stage:</strong> {deal.stage}</p>
             <p><strong>Contact:</strong> {deal.contact.name}</p>
+            <p><strong>Workspace Type:</strong> {deal.workspace.type}</p>
 
-            {deal.metadata.quote_items && (
-                <div style={{ marginTop: '2rem' }}>
-                    <h4>Generated Quote:</h4>
-                    <ul>
-                        {deal.metadata.quote_items.map((item, i) => (
-                            <li key={i}>{item.desc} - ${item.price}</li>
-                        ))}
-                    </ul>
-                </div>
+            {deal.workspace.type === 'TRADIE' && (
+                <>
+                    {deal.metadata.quote_items && (
+                        <div style={{ marginTop: '2rem' }}>
+                            <h4>Generated Quote:</h4>
+                            <ul>
+                                {deal.metadata.quote_items.map((item, i) => (
+                                    <li key={i}>{item.desc} - ${item.price}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <QuoteGenerator dealId={deal.id} onQuoteGenerated={handleUpdate} />
+                </>
             )}
-            
-            {/* Assuming Tradie workspace, show the generator */}
-            <QuoteGenerator dealId={deal.id} onQuoteGenerated={handleQuoteGenerated} />
+
+            {deal.workspace.type === 'AGENT' && (
+                <MatchFinder dealId={deal.id} />
+            )}
         </div>
     );
 }

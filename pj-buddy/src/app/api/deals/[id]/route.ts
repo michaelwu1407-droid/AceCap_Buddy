@@ -12,7 +12,7 @@ export async function GET(
     const { id } = params;
     const deal = await prisma.deal.findUnique({
       where: { id },
-      include: { contact: true },
+      include: { contact: true, workspace: true },
     });
 
     if (!deal) {

@@ -11,7 +11,8 @@ This document tracks the development progress, key decisions, and version histor
 - **Database Schema:** Defined the complete `schema.prisma` file for all core models.
 - **Database Provisioning:** Successfully set up the database schema on Supabase by generating and manually executing a SQL script to bypass network issues (see `ISSUE-LOG.md`).
 
-### Features Implemented (Hub):
+### Features Implemented (Hub & Spokes):
+- **Tradie Module:** Integrated the `generateQuote` server action into a deal detail page, allowing users to add line items and update deal values dynamically.
 - **Server Actions:** Implemented core business logic for Tradie (`generateQuote`) and Agent (`findMatches`) modules, along with a `getDealHealth` utility.
 - **Activities API:** Backend endpoints for creating and listing activities associated with deals or contacts.
 - **Deals API & UI:** Full CRUD API and a Kanban board UI with drag-and-drop functionality for pipeline management.
