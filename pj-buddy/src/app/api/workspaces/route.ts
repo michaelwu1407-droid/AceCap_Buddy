@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, type, branding_color } = body;
+    const { name, type, brandingColor } = body;
 
     if (!name || !type) {
       return NextResponse.json(
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       data: {
         name,
         type,
-        branding_color,
+        brandingColor,
       },
     });
 
