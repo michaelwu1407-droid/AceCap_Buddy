@@ -1,6 +1,6 @@
 'use server';
 
-import { PrismaClient, Contact } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
 const prisma = new PrismaClient();
@@ -12,6 +12,7 @@ const findMatchesSchema = z.object({
 const listingMetadataSchema = z.object({
   price: z.number(),
 }).passthrough();
+
 
 export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
   try {
@@ -25,6 +26,7 @@ export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
     const listingMetadata = listingMetadataSchema.parse(listing.metadata);
     const price = listingMetadata.price || 0;
 
+    // Prisma's JSON filtering for the budget.
     const matchingContacts = await prisma.contact.findMany({
       where: {
         workspace_id: listing.workspace_id,
