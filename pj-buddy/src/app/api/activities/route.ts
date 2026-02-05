@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, content, deal_id, contact_id } = body;
+    const { type, content, dealId, contactId } = body;
 
     if (!type || !content) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       );
     }
     
-    if (!deal_id && !contact_id) {
+    if (!dealId && !contactId) {
         return NextResponse.json(
             { error: 'An activity must be related to either a deal or a contact.' },
             { status: 400 }
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
       data: {
         type,
         content,
-        deal_id,
+        dealId,
+        contactId,
         contact_id,
       },
     });
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
         );
     }
 
-    const whereClause = dealId ? { deal_id: dealId } : { contact_id: contactId };
+    const whereClause = dealId ? { dealId: dealId } : { contactId: contactId };
 
     try {
         const activities = await prisma.activity.findMany({
