@@ -12,6 +12,8 @@ This document tracks the development progress, key decisions, and version histor
 - **Database Provisioning:** Successfully set up the database schema on Supabase. This was achieved by manually generating the SQL script and running it in the Supabase SQL Editor to bypass a network connectivity issue (see `ISSUE-LOG.md` for details).
 
 ### Features Implemented:
+- **Contacts API & UI:** Full CRUD API and a basic frontend for creating and listing contacts within a workspace.
+- **Deals API & UI:** Full CRUD API and a basic frontend for creating and listing deals, associated with contacts and workspaces.
 - **Workspace API:**
   - `POST /api/workspaces`: Create a new workspace.
   - `GET /api/workspaces`: Retrieve a list of all workspaces.

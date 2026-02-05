@@ -1,20 +1,15 @@
 'use client';
 
 import { useEffect, useState, FormEvent } from 'react';
+import { KanbanBoard, DealCardData } from '@/components/core/KanbanBoard';
+import { DealStage } from '@prisma/client';
 
-// Basic type definitions
-type Deal = {
-  id: string;
-  title: string;
-  value: number;
-  stage: string;
-  contact: { id: string; name: string; };
-};
+// Re-using types from previous implementation
 type Contact = { id: string; name: string; };
 type Workspace = { id: string; name: string; };
 
 export default function DealsPage() {
-  const [deals, setDeals] = useState<Deal[]>([]);
+  const [deals, setDeals] = useState<DealCardData[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>('');
@@ -26,6 +21,8 @@ export default function DealsPage() {
   const [newTitle, setNewTitle] = useState('');
   const [newValue, setNewValue] = useState(0);
   const [selectedContact, setSelectedContact] = useState<string>('');
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
 
   // Fetch workspaces on initial load
   useEffect(() => {
@@ -37,6 +34,8 @@ export default function DealsPage() {
         setWorkspaces(data);
         if (data.length > 0) {
           setSelectedWorkspace(data[0].id);
+        } else {
+          setLoading(false);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -53,8 +52,11 @@ export default function DealsPage() {
       setLoading(true);
       setError(null);
       try {
-        // Fetch contacts for the form dropdown
-        const contactsRes = await fetch(`/api/contacts?workspaceId=${selectedWorkspace}`);
+        const [contactsRes, dealsRes] = await Promise.all([
+          fetch(`/api/contacts?workspaceId=${selectedWorkspace}`),
+          fetch(`/api/deals?workspaceId=${selectedWorkspace}`)
+        ]);
+
         if (!contactsRes.ok) throw new Error('Failed to fetch contacts');
         const contactsData = await contactsRes.json();
         setContacts(contactsData);
@@ -62,8 +64,6 @@ export default function DealsPage() {
           setSelectedContact(contactsData[0].id);
         }
 
-        // Fetch deals
-        const dealsRes = await fetch(`/api/deals?workspaceId=${selectedWorkspace}`);
         if (!dealsRes.ok) throw new Error('Failed to fetch deals');
         const dealsData = await dealsRes.json();
         setDeals(dealsData);
@@ -94,46 +94,75 @@ export default function DealsPage() {
         }),
       });
       if (!res.ok) throw new Error('Failed to create deal');
-      
-      // Refetch deals list
-      const dealsRes = await fetch(`/api/deals?workspaceId=${selectedWorkspace}`);
-      const dealsData = await dealsRes.json();
-      setDeals(dealsData);
+      const newDeal = await res.json();
+      setDeals(prevDeals => [...prevDeals, newDeal]);
 
       setNewTitle('');
       setNewValue(0);
+      setIsFormVisible(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
+  const handleDragEnd = async (dealId: string, newStage: DealStage) => {
+    // Optimistically update the UI
+    const originalDeals = deals;
+    setDeals(prevDeals =>
+      prevDeals.map(deal =>
+        deal.id === dealId ? { ...deal, stage: newStage } : deal
+      )
+    );
+
+    // Update the backend
+    try {
+      const response = await fetch(`/api/deals/${dealId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage: newStage }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update deal stage');
+      }
+    } catch (error) {
+      console.error(error);
+      // Revert the UI on failure
+      setDeals(originalDeals);
+      setError('Failed to update deal. Please try again.');
+    }
+  };
+
   return (
     <div>
-      <h1>Deals</h1>
-      <select value={selectedWorkspace} onChange={e => setSelectedWorkspace(e.target.value)}>
-        {workspaces.map(ws => <option key={ws.id} value={ws.id}>{ws.name}</option>)}
-      </select>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 1rem' }}>
+        <h1>Deals Pipeline</h1>
+        <div>
+          <select value={selectedWorkspace} onChange={e => setSelectedWorkspace(e.target.value)}>
+             {workspaces.map(ws => <option key={ws.id} value={ws.id}>{ws.name}</option>)}
+          </select>
+          <button onClick={() => setIsFormVisible(!isFormVisible)} style={{ marginLeft: '1rem' }}>
+            {isFormVisible ? 'Cancel' : '+ New Deal'}
+          </button>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ margin: '2rem 0' }}>
-        <h2>Add New Deal</h2>
-        <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Deal Title" required />
-        <input type="number" value={newValue} onChange={e => setNewValue(Number(e.target.value))} placeholder="Value" />
-        <select value={selectedContact} onChange={e => setSelectedContact(e.target.value)}>
-          {contacts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-        <button type="submit">Add Deal</button>
-      </form>
+      {isFormVisible && (
+        <form onSubmit={handleSubmit} style={{ margin: '1rem', padding: '1rem', backgroundColor: '#1f2937', borderRadius: '0.5rem' }}>
+          <h2>Add New Deal</h2>
+          <input type="text" value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Deal Title" required />
+          <input type="number" value={newValue} onChange={e => setNewValue(Number(e.target.value))} placeholder="Value" />
+          <select value={selectedContact} onChange={e => setSelectedContact(e.target.value)}>
+            <option value="">Select a contact</option>
+            {contacts.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <button type="submit">Add Deal</button>
+        </form>
+      )}
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
       
-      <ul>
-        {deals.map(deal => (
-          <li key={deal.id}>
-            <strong>{deal.title}</strong> (${deal.value}) - {deal.stage} - <em>{deal.contact.name}</em>
-          </li>
-        ))}
-      </ul>
+      {!loading && !error && <KanbanBoard deals={deals} onDragEnd={handleDragEnd} />}
     </div>
   );
 }
