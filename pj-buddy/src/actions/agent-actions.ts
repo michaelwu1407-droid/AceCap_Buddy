@@ -25,9 +25,6 @@ export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
     const listingMetadata = listingMetadataSchema.parse(listing.metadata);
     const price = listingMetadata.price || 0;
 
-    // Prisma's JSON filtering requires a specific structure.
-    // We query for contacts where the 'budget' field in their metadata is
-    // greater than or equal to the listing price.
     const matchingContacts = await prisma.contact.findMany({
       where: {
         workspace_id: listing.workspace_id,
