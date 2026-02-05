@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     try {
         const contacts = await prisma.contact.findMany({
             where: {
-                workspace_id: workspaceId
+                workspaceId: workspaceId
             }
         });
         return NextResponse.json(contacts);
