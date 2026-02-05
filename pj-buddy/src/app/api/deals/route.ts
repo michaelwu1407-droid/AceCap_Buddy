@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     try {
         const deals = await prisma.deal.findMany({
             where: {
-                workspace_id: workspaceId
+                workspaceId: workspaceId
             },
             include: {
                 contact: true // Include related contact information
