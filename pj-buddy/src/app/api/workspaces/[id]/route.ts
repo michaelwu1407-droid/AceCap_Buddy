@@ -34,14 +34,14 @@ export async function PUT(
   try {
     const { id } = params;
     const body = await request.json();
-    const { name, type, branding_color } = body;
+    const { name, type, brandingColor } = body;
 
     const updatedWorkspace = await prisma.workspace.update({
       where: { id },
       data: {
         name,
         type,
-        branding_color,
+        brandingColor,
       },
     });
 
