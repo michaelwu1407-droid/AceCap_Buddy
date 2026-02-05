@@ -38,7 +38,7 @@ export async function generateQuote(input: z.infer<typeof generateQuoteSchema>) 
   } catch (error) {
     console.error("Error generating quote:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors };
+      return { success: false, error: error.issues };
     }
     return { success: false, error: 'An unexpected error occurred.' };
   }
