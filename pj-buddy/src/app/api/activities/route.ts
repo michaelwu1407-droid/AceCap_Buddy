@@ -61,7 +61,7 @@ export async function GET(request: Request) {
         const activities = await prisma.activity.findMany({
             where: whereClause,
             orderBy: {
-                created_at: 'desc'
+                createdAt: 'desc'
             }
         });
         return NextResponse.json(activities);
