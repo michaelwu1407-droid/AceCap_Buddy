@@ -19,7 +19,8 @@ export default function RootLayout({
         <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc', marginBottom: '1rem' }}>
           <Link href="/" style={{ marginRight: '1rem' }}>Home</Link>
           <Link href="/workspaces" style={{ marginRight: '1rem' }}>Workspaces</Link>
-          <Link href="/contacts">Contacts</Link>
+          <Link href="/contacts" style={{ marginRight: '1rem' }}>Contacts</Link>
+          <Link href="/deals">Deals</Link>
         </nav>
         <main style={{ padding: '1rem' }}>
           {children}
