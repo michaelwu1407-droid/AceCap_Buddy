@@ -89,8 +89,8 @@ export default function DealsPage() {
         body: JSON.stringify({
           title: newTitle,
           value: Number(newValue),
-          contact_id: selectedContact,
-          workspace_id: selectedWorkspace,
+          contactId: selectedContact,
+          workspaceId: selectedWorkspace,
         }),
       });
       if (!res.ok) throw new Error('Failed to create deal');

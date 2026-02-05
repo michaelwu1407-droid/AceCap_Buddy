@@ -77,7 +77,7 @@ export default function ContactsPage() {
       const response = await fetch('/api/contacts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName, email: newEmail, workspace_id: selectedWorkspace }),
+        body: JSON.stringify({ name: newName, email: newEmail, workspaceId: selectedWorkspace }),
       });
 
       if (!response.ok) throw new Error('Failed to create contact');

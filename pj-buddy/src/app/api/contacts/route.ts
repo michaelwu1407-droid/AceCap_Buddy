@@ -6,11 +6,11 @@ const prisma = new PrismaClient();
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, address, workspace_id, metadata } = body;
+    const { name, email, phone, address, workspaceId, metadata } = body;
 
-    if (!name || !workspace_id) {
+    if (!name || !workspaceId) {
       return NextResponse.json(
-        { error: 'Name and workspace_id are required' },
+        { error: 'Name and workspaceId are required' },
         { status: 400 }
       );
     }
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         email,
         phone,
         address,
-        workspace_id,
+        workspaceId,
         metadata,
       },
     });
