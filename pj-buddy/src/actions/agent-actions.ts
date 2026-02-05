@@ -29,7 +29,7 @@ export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
     // Prisma's JSON filtering for the budget.
     const matchingContacts = await prisma.contact.findMany({
       where: {
-        workspace_id: listing.workspace_id,
+        workspaceId: listing.workspace_id,
         metadata: {
           path: ['budget'],
           gte: price,
