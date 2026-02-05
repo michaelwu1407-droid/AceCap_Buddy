@@ -43,7 +43,7 @@ export async function findMatches(input: z.infer<typeof findMatchesSchema>) {
   } catch (error) {
     console.error("Error finding matches:", error);
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors };
+      return { success: false, error: error.issues };
     }
     return { success: false, error: 'An unexpected error occurred.' };
   }
