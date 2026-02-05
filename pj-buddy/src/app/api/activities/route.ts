@@ -29,7 +29,6 @@ export async function POST(request: Request) {
         content,
         dealId,
         contactId,
-        contact_id,
       },
     });
 
