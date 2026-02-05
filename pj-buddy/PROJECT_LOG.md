@@ -24,3 +24,18 @@ This document tracks the development progress, key decisions, and version histor
 ### Project Management:
 - Created `PROJECT_LOG.md` and `ISSUE_LOG.md`.
 - Configured git identity and committed all initial work.
+
+## v0.1.1 - Vercel Deployment & Troubleshooting
+
+**Date:** 2026-02-05
+
+### Deployment:
+- Initiated deployment to Vercel.
+- **Issue 1: Root Directory.** Resolved initial 404 error by setting the Vercel Root Directory to `pj-buddy`.
+- **Issue 2: TypeScript Build Error.** Encountered a persistent `implicitly has an 'any' type` error. Fixed the code in `agent-actions.ts`.
+- **Issue 3: Git & Vercel Sync.** Diagnosed and resolved a major desynchronization issue where Vercel was connected to an incorrect GitHub repository and was not receiving the pushed fixes.
+- **Issue 4: Vercel Build Cache.** Identified a probable Vercel caching issue preventing the latest code from being built, even with the correct commit.
+- **Solution:** Forced a Vercel cache invalidation by adding `prisma generate` to the `build` script in `package.json`. This ensures the database client is generated and forces Vercel to re-evaluate the build process.
+
+### Current Status:
+- The latest fix has been pushed to GitHub. A new Vercel deployment is in progress, which is expected to succeed.
